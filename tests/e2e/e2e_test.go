@@ -39,17 +39,21 @@ func newTestPaths(promptCategory, topic string) *TestPaths {
 }
 
 func runCommand(paths *TestPaths, args ...string) ([]byte, error) {
-	fullCmd := fmt.Sprintf("%s %s", paths.BinPath, formatArgs(args))
+	formattedArgs := formatArgs(args)
+	fullCmd := fmt.Sprintf("%s %s", paths.BinPath, formattedArgs)
+
 	GinkgoWriter.Println("Running command:")
 	GinkgoWriter.Println(fullCmd)
 
-	// Save command to file
-	logFilePath := filepath.Join(paths.RootDir, ".build", "executed_prompts.log")
+	// Log the full command for traceability
+	logFilePath := filepath.Join(paths.RootDir, "../../.build", "executed_prompts.log")
 	appendToFile(logFilePath, fullCmd+"\n")
 
+	// Prepare and execute the CLI command
 	cmd := exec.Command(paths.BinPath, args...)
 	cmd.Dir = paths.RootDir
 	cmd.Env = os.Environ()
+
 	return cmd.CombinedOutput()
 }
 
@@ -122,3 +126,25 @@ var _ = Describe("AI Explorer CLI (E2E)", Ordered, func() {
 			"Explain Sliding Window Protocol to an CCIE person keep it short"),
 	)
 })
+
+func FindProjectRoot(markerFile string) (string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	for {
+		markerPath := filepath.Join(dir, markerFile)
+		if _, err := os.Stat(markerPath); err == nil {
+			return dir, nil
+		}
+
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			break
+		}
+		dir = parent
+	}
+
+	return "", fmt.Errorf("could not find project root with marker file: %s", markerFile)
+}
