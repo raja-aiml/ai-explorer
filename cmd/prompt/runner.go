@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 
+	"raja.aiml/ai.explorer/paths"
 	"raja.aiml/ai.explorer/prompt"
-	"raja.aiml/ai.explorer/resources"
 )
 
 // Runner defines the interface for anything that can generate a prompt.
@@ -37,7 +37,7 @@ func (r *PromptRunner) ResolvePaths() (tmpl, cfg, out string) {
 
 	tmpl, cfg, out = r.Template, r.Config, r.Output
 	if tmpl == "" || cfg == "" || out == "" {
-		resolver := resources.PathResolver{PromptCategory: r.PromptCategory}
+		resolver := paths.PathResolver{PromptCategory: r.PromptCategory}
 		defTmpl, defCfg, defOut := resolver.Derive(r.Topic)
 		if tmpl == "" {
 			tmpl = defTmpl

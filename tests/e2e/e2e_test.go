@@ -9,7 +9,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"raja.aiml/ai.explorer/resources"
+	"raja.aiml/ai.explorer/paths"
 )
 
 const (
@@ -26,7 +26,7 @@ type TestPaths struct {
 }
 
 func newTestPaths(promptCategory, topic string) *TestPaths {
-	resolver := resources.PathResolver{PromptCategory: promptCategory}
+	resolver := paths.PathResolver{PromptCategory: promptCategory}
 	tmpl, cfg, out := resolver.Derive(topic)
 
 	return &TestPaths{
