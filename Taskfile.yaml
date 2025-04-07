@@ -80,6 +80,10 @@ tasks:
       - echo "  echo 'source $(pwd)/.build/.ai-explorer-completion.zsh' >> ~/.zshrc"
     silent: true
 
+  prompt:
+    desc: "Generate full repository as prompt"
+    cmds:
+      - code2prompt . --exclude "go.sum,go.mod,.git,.build,.idea,.DS_Store,.vscode,LICENSE" --tokens
   tools:
     desc: "Install Ginkgo CLI and Gomega libraries"
     cmds:
