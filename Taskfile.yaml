@@ -55,7 +55,7 @@ tasks:
     cmds:
       - mkdir -p .build
       - go build -o {{.BINARY}} main.go
-      - ginkgo -v e2e
+      - ginkgo -v tests/e2e
 
   coverage:
     desc: "Run unit tests with coverage and generate HTML report"
