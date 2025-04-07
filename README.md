@@ -1,0 +1,2 @@
+go run . prompt --category=classification --topic=router --template=resources/classification/router/template.yaml --config=resources/classification/router/config.yaml --query="Explain Sliding Window Protocol to an CCIE person keep it short"
+Prompt saved to: resources/classification/router/prompt.txt

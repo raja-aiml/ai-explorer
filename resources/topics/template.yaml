@@ -1,0 +1,35 @@
+template: |
+  I’m a {{ audience }} learning about {{ topic }} as a {{ learning_stage }} learner.
+
+  I find technical explanations overwhelming, so I’d like an analogy to help me understand it in a simple, relatable way.
+
+  Can you explain {{ topic }} using a real-life scenario that a {{ context }} would be familiar with, such as 
+  {{ analogies }}?
+
+  Please cover key concepts such as:
+  {% for concept in concepts %}
+  - {{ concept }}
+  {% endfor %}
+
+  Explanation Requirements:
+  {% for item in explanation_requirements %}
+  - {{ item }}
+  {% endfor %}
+
+  Formatting Guidelines:
+  {% for format in formatting %}
+  - {{ format }}
+  {% endfor %}
+
+  Constraints:
+  {% for constraint in constraints %}
+  - {{ constraint }}
+  {% endfor %}
+
+  Output Format:
+  {% for output in output_format %}
+  - {{ output }}
+  {% endfor %}
+
+  The analogy should make it clear why {{ topic }} is useful and how it helps with {{ purpose }}. 
+  Please ensure the explanation is **{{ tone }}**.

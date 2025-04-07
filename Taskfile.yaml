@@ -1,0 +1,87 @@
+# https://taskfile.dev
+
+version: '3'
+
+vars:
+  # Project ID for AI Explorer, pulled from environment or defaulting to empty.
+  TEST_PROJECT_ID:
+    sh: "echo ${AI_EXPLORER:-}"
+
+  # Output binary path
+  BINARY: .build/ai-explorer
+
+  # Coverage output files
+  COVERAGE_OUT: .build/coverage.out
+  COVERAGE_HTML: .build/coverage.html
+
+env:
+  # Enables E2E testing in the AI Explorer environment.
+  AI_EXPLORER_E2E_TEST: true
+
+  # Injects the project ID into the environment for test use.
+  AI_EXPLORER_PROJECT_ID: "{{.TEST_PROJECT_ID}}"
+
+  # Set Path
+  PATH: "{{.PATH}}:$(go env GOPATH)/bin"
+
+tasks:
+
+  default:
+    desc: "Display help information"
+    cmds:
+      - echo "Available tasks:"
+      - task --list
+
+  build:
+    desc: "Compile Go code in the current directory"
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - mkdir -p .build
+      - go build -o {{.BINARY}} main.go
+
+  test:
+    desc: "Run only unit tests (excluding e2e packages)"
+    cmds:
+      - go test -count=1 $(go list ./... | grep -v '/e2e$')
+
+  lint:
+    desc: "Run go mod tidy, format, and vet"
+    dir: "{{.USER_WORKING_DIR}}"
+    cmds:
+      - go mod tidy
+      - go fmt ./...
+      - go vet ./...
+
+  e2e:
+    desc: "Build and run Ginkgo-based end-to-end tests"
+    cmds:
+      - mkdir -p .build
+      - go build -o {{.BINARY}} main.go
+      - ginkgo -v e2e
+
+  coverage:
+    desc: "Run unit tests with coverage and generate HTML report"
+    cmds:
+      - mkdir -p .build
+      - go test $(go list ./... | grep -v '/e2e$') -coverprofile={{.COVERAGE_OUT}}
+      - go tool cover -html={{.COVERAGE_OUT}} -o {{.COVERAGE_HTML}}
+      - echo "Coverage report available at {{.COVERAGE_HTML}}
+
+
+  completion:
+    desc: "Generate Zsh completion script for ai-explorer"
+    cmds:
+      - mkdir -p .build
+      - .build/ai-explorer completion zsh > .build/.ai-explorer-completion.zsh
+      - echo "Zsh completion script saved to .build/.ai-explorer-completion.zsh"
+      - echo "To enable completions, run:"
+      - echo "  source .build/.ai-explorer-completion.zsh"
+      - echo "Or add it to your ~/.zshrc:"
+      - echo "  echo 'source $(pwd)/.build/.ai-explorer-completion.zsh' >> ~/.zshrc"
+    silent: true
+
+  tools:
+    desc: "Install Ginkgo CLI and Gomega libraries"
+    cmds:
+      - go install github.com/onsi/ginkgo/v2/ginkgo@latest
+      - go get github.com/onsi/gomega/...

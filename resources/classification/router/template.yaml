@@ -1,0 +1,88 @@
+template: |
+  You are an intelligent query router and metadata extractor for an AI assistant platform.
+
+  User Query: {{ user_query }}
+
+  Your job is to deeply analyze a user's query and perform:
+  - Intent classification
+  - Metadata extraction
+
+  Based on the Intent and Metadata, identify the most appropriate prompting technique to be used from the list:
+  {% for technique in prompt_techniques %}
+  - {{ technique }}
+  {% endfor %}
+
+  Tasks to perform:
+  {% for task in tasks %}
+  - {{ task.title }}: {{ task.description }}
+  {% endfor %}
+
+  When classifying the query:
+  - Use the predefined routes available under: {{ route_definitions_reference }}
+  - Pick the route that best aligns with the user's intent and reasoning outcome.
+
+  Metadata Fields to Extract:
+  {% for field in metadata_fields %}
+  - {{ field.name }} (type: {{ field.type }}) — {{ field.description }}{% if field.optional %} [Optional]{% endif %}{% if field.condition %} (Condition: {{ field.condition }}){% endif %}
+  {% endfor %}
+
+  Example Query:
+  "{{ example.user_query }}"
+
+  Example Output:
+  ---
+  Tree of Thought: |
+  {% for thought in example.tree_of_thought %}
+    - {{ thought }}
+  {% endfor %}
+  Chain of Thought Reasoning: |
+    {{ example.chain_of_reasoning }}
+  Final Classification: {{ example.final_route }}
+  Explanation: |
+    {{ example.explanation }}
+  Metadata:
+    intent_keywords:
+  {% for keyword in example.metadata.intent_keywords %}
+      - {{ keyword }}
+  {% endfor %}
+    tone: "{{ example.metadata.tone }}"
+    urgency_level: "{{ example.metadata.urgency_level }}"
+    query_complexity: "{{ example.metadata.query_complexity }}"
+    task_type: "{{ example.metadata.task_type }}"
+    answer_format: "{{ example.metadata.answer_format }}"
+    user_type: "{{ example.metadata.user_type }}"
+    prompt_technique: "{{ example.metadata.prompt_technique }}"
+  {% if example.metadata.malicious_flags %}
+    malicious_flags:
+  {% for flag in example.metadata.malicious_flags %}
+      - {{ flag }}
+  {% endfor %}
+  {% endif %}
+    timestamp: "{{ example.metadata.timestamp }}"
+    session_id: "{{ example.metadata.session_id }}"
+    query_language: "{{ example.metadata.query_language }}"
+
+  Please respond using the following YAML format:
+
+  ---
+  Tree of Thought: |
+    [Provide detailed interpretations and analysis of the query]
+  Chain of Thought Reasoning: |
+    [Provide your sequential reasoning process evaluating the interpretations]
+  Final Classification: [Selected prompting technique from the list]
+  Explanation: |
+    [Explain the decision process and rationale behind the selected route]
+  Metadata:
+    intent_keywords: [List of keywords or phrases that indicate the user's intent]
+    tone: "[User's tone, e.g., technical, direct]"
+    urgency_level: "[low, medium, high]"
+    query_complexity: "[basic, intermediate, advanced]"
+    task_type: "[explanation, information_retrieval, reasoning_analysis]"
+    answer_format: "[short_answer, paragraph_essay, list, structured_yaml]"
+    user_type: "[inferred user type, e.g., network engineer, student]"
+    prompt_technique: "[Selected prompting technique]"
+    malicious_flags: [List any potential malicious flags if applicable, otherwise leave empty]
+    timestamp: "[Timestamp when the query was received]"
+    session_id: "[Unique session identifier]"
+    query_language: "[Language of the query]"
+  ---
