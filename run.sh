@@ -2,14 +2,27 @@
 
 set -e
 
-# Step 1: Generate the prompt
-echo "🔧 Generating prompt..."
-.build/ai-explorer prompt \
-  --category=classification \
-  --topic=router \
-  --template="resources/classification/router/template.yaml" \
-  --config="resources/classification/router/config.yaml" \
-  --query="Explain Sliding Window Protocol to a CCIE person, keep it short"
+# Step 1: Generate prompts for all categories and topics
+echo "🔧 Generating prompts for all combinations..."
+categories=("classification" "demo" "topics")
+for category in "${categories[@]}"; do
+  for topic_dir in "resources/$category"/*; do
+    if [ -d "$topic_dir" ]; then
+      topic=$(basename "$topic_dir")
+      echo "🔧 Generating prompt for category=$category, topic=$topic"
+      if [ "$category" = "classification" ]; then
+        .build/ai-explorer prompt \
+          --category="$category" \
+          --topic="$topic" \
+          --query="Explain Sliding Window Protocol to a CCIE person, keep it short"
+      else
+        .build/ai-explorer prompt \
+          --category="$category" \
+          --topic="$topic"
+      fi
+    fi
+  done
+done
 
 # Step 2: Generate the llm
 echo "🔧 Generating llm..."
