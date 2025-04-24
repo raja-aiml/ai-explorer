@@ -8,8 +8,15 @@ template: |
 
   # Your responsibilities
   Your job is to deeply analyze a user's query and perform:
+  - Intent Detection             # Understand the user's intent
   - Intent classification        # Determine what the user wants to achieve
   - Metadata extraction          # Identify relevant attributes like tone, complexity, user type, etc.
+
+  # Based on the user query, identify the intent
+  Based on the user query, identify the intent from the list of intents:
+  {% for intent in intents %}
+  - {{ intent.name }}: {{ intent.description }}    # Intent definitions provided dynamically
+  {% endfor %}
 
   # Based on the Intent and Metadata, choose the best prompting strategy
   Based on the Intent and Metadata, identify the most appropriate prompting technique to be used from the list:
@@ -40,6 +47,7 @@ template: |
 
   Example Output:
   ---
+  Intent: {{ example.intent }}    # User's intent classification
   Tree of Thought: |
   {% for thought in example.tree_of_thought %}
     - {{ thought }}     # Each thought is a plausible interpretation of the user query
@@ -83,6 +91,7 @@ template: |
   Explanation: |
     [Explain the decision process and rationale behind the selected route]
   Metadata:
+    intent: [User's intent classification]
     intent_keywords: [List of keywords or phrases that indicate the user's intent]
     tone: "[User's tone, e.g., technical, direct]"
     urgency_level: "[low, medium, high]"

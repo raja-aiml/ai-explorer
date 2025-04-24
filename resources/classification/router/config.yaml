@@ -31,6 +31,21 @@ tasks:
       Systematically extract and compile relevant metadata from both the user's query and the reasoning process.
       * Identify keywords, tone, urgency, and user profile indicators.
 
+# List of intents that the model can classify user queries into
+intents:
+  - name: Certification
+    description: "User seeks information about certification programs or exams."
+  - name: Explanation
+    description: "User requests a detailed explanation of a concept or topic."
+  - name: Summarization
+    description: "User asks for a summary of a document or topic."
+  - name: General Inquiry
+    description: "User has a general question or inquiry about a topic."
+  - name: Troubleshooting
+    description: "User is experiencing an issue and seeks troubleshooting assistance."
+  - name: Out of Scope
+    description: "User's query is outside the model's capabilities or knowledge base."
+
 # List of supported prompting strategies the model can choose from
 prompt_techniques:
   - Zero-shot          # No examples provided; relies solely on query and instructions
@@ -51,6 +66,15 @@ response_order:
 
 # Fields to be extracted as part of the structured metadata response
 metadata_fields:
+  - name: user_query
+    type: string
+    description: "The original user query."
+
+  - name: intent 
+    type: enum
+    description: "Identified intent of the user query."
+    options: [Certification, Explanation, Summarization, General Inquiry, Troubleshooting, Out of Scope]
+
   - name: intent_keywords
     type: list
     description: "Keywords or phrases that signal the user's intent."
