@@ -1,3 +1,7 @@
+version: "1.0.0"
+last_updated: "2025-04-23"
+maintainer: "AI Router Team"
+
 # Reference to the available routing logic definitions
 # This variable should point to a file or object containing predefined routes
 # Each route maps an intent category to a handling strategy (e.g., explanation, summarization)
@@ -5,9 +9,17 @@ route_definitions_reference: routes_definitions
 
 # Tasks the system must perform in sequence to classify and respond to the query
 tasks:
+  - title: Input Validation
+    description: >
+      Verify that the input query meets basic requirements for processing.
+      * Check for minimum query length (>3 words)
+      * Ensure the query is intelligible and coherent
+      * Flag potentially harmful or policy-violating content
+      * Determine if the query is within system capabilities
+
   - title: Tree of Thought
     description: >
-      Explore multiple plausible interpretations of the user’s query.
+      Explore multiple plausible interpretations of the user's query.
       * Provide a comprehensive overview of the topic.
       * Conduct an expert-level inquiry into both theoretical and practical aspects.
       * Deliver a detailed, structured explanation covering foundational definitions, implementation strategies, and advanced use cases.
@@ -25,63 +37,204 @@ tasks:
     description: >
       Synthesize insights from previous steps to determine the most appropriate processing route.
       * Select the final route that best aligns with overall context, user intent, and identified priorities.
+      * Assign a confidence score to the classification
+      * Consider hybrid approaches when appropriate
+      * Implement fallback strategies for ambiguous cases
 
   - title: Metadata Extraction
     description: >
       Systematically extract and compile relevant metadata from both the user's query and the reasoning process.
       * Identify keywords, tone, urgency, and user profile indicators.
+      * Standardize extracted metadata according to defined schemas
+      * Apply validation rules to ensure data quality
+      * Provide confidence scores for uncertain extractions
 
 # List of intents that the model can classify user queries into
 intents:
   - name: Certification
     description: "User seeks information about certification programs or exams."
+    examples:
+      - "What certifications do I need for cloud engineering?"
+      - "Tell me about the AWS Solutions Architect exam."
+  
   - name: Explanation
     description: "User requests a detailed explanation of a concept or topic."
+    examples:
+      - "How does quantum computing work?"
+      - "Explain the concept of tree-of-thought prompting."
+  
   - name: Summarization
     description: "User asks for a summary of a document or topic."
+    examples:
+      - "Summarize the key points of this article."
+      - "What are the main ideas in system prompt engineering?"
+  
+  - name: Code Generation
+    description: "User requests generation of code or programming assistance."
+    examples:
+      - "Write a Python function to parse JSON."
+      - "Create a React component for a login form."
+  
+  - name: Data Analysis
+    description: "User seeks assistance with data analysis or interpretation."
+    examples:
+      - "Analyze this sales data and identify trends."
+      - "What insights can you extract from this survey data?"
+  
+  - name: Planning
+    description: "User needs help with planning or organizing a project or task."
+    examples:
+      - "Help me create a study plan for machine learning."
+      - "What steps should I take to implement a CI/CD pipeline?"
+  
   - name: General Inquiry
     description: "User has a general question or inquiry about a topic."
+    examples:
+      - "What is the capital of France?"
+      - "Who invented the telephone?"
+  
   - name: Troubleshooting
     description: "User is experiencing an issue and seeks troubleshooting assistance."
+    examples:
+      - "Why is my Docker container crashing on startup?"
+      - "How do I fix the 'undefined reference' error in my C++ code?"
+  
   - name: Out of Scope
     description: "User's query is outside the model's capabilities or knowledge base."
+    examples:
+      - "Book a flight ticket for me to New York."
+      - "What is my bank account balance?"
+
+# Intent hierarchies for related intents
+intent_hierarchies:
+  - category: Learning Intents
+    intents: [Explanation, Certification, Summarization]
+  
+  - category: Technical Intents
+    intents: [Code Generation, Troubleshooting, Data Analysis]
+  
+  - category: Information Intents
+    intents: [General Inquiry, Explanation]
+  
+  - category: Planning Intents
+    intents: [Planning]
 
 # List of supported prompting strategies the model can choose from
 prompt_techniques:
-  - Zero-shot          # No examples provided; relies solely on query and instructions
-  - Few-shot           # One or a few examples included for contextual guidance
-  - Multi-shot         # Multiple examples included to cover variations and edge cases
-  - Step-back          # Reframe or simplify the problem before solving
-  - Self-consistent    # Generate multiple outputs and choose the most consistent one
-  - Chain-of-thought   # Encourage step-by-step reasoning before final answer
-  - Tree-of-thought    # Explore and evaluate multiple possible lines of reasoning
+  - name: Zero-shot
+    description: "No examples provided; relies solely on query and instructions"
+    use_when: "query_complexity == 'basic' AND task_type == 'information_retrieval'"
+  
+  - name: Few-shot
+    description: "One or a few examples included for contextual guidance"
+    use_when: "query_complexity == 'intermediate' OR intent IN ['Explanation', 'Summarization']"
+  
+  - name: Multi-shot
+    description: "Multiple examples included to cover variations and edge cases"
+    use_when: "query_complexity == 'advanced' AND intent IN ['Code Generation', 'Data Analysis']"
+  
+  - name: Step-back
+    description: "Reframe or simplify the problem before solving"
+    use_when: "query_complexity == 'advanced' OR intent == 'Troubleshooting'"
+  
+  - name: Self-consistent
+    description: "Generate multiple outputs and choose the most consistent one"
+    use_when: "confidence_score < 80 OR intent IN ['Data Analysis', 'Planning']"
+  
+  - name: Chain-of-thought
+    description: "Encourage step-by-step reasoning before final answer"
+    use_when: "query_complexity IN ['intermediate', 'advanced'] OR task_type == 'reasoning_analysis'"
+  
+  - name: Tree-of-thought
+    description: "Explore and evaluate multiple possible lines of reasoning"
+    use_when: "query_complexity == 'advanced' OR intent IN ['Troubleshooting', 'Planning']"
+
+# Hybrid technique definitions
+hybrid_techniques:
+  - name: Chain-of-thought + Few-shot
+    description: "Combines step-by-step reasoning with examples"
+    use_when: "query_complexity == 'advanced' AND intent IN ['Explanation', 'Code Generation']"
+  
+  - name: Tree-of-thought + Self-consistent
+    description: "Explores multiple reasoning paths and selects most consistent output"
+    use_when: "query_complexity == 'advanced' AND confidence_score < 70"
+
+# Fallback strategies for ambiguous queries
+fallback_strategies:
+  - name: Query Clarification
+    description: "Request more information from the user"
+    use_when: "confidence_score < 60"
+  
+  - name: Intent Disambiguation
+    description: "Present multiple possible intents to the user for selection"
+    use_when: "multiple_intents_detected == true"
+  
+  - name: General Approach
+    description: "Use a general-purpose approach that works across intents"
+    use_when: "confidence_score < 50"
 
 # Specifies the order in which sections should appear in the structured YAML response
 response_order:
+  - Intent
+  - Confidence
   - Tree of Thought
   - Chain of Thought Reasoning
   - Final Classification
   - Explanation
   - Metadata
 
+# Schema validation for the response
+schema_validation:
+  required_fields:
+    - Intent
+    - Confidence
+    - Tree of Thought
+    - Chain of Thought Reasoning
+    - Final Classification
+    - Explanation
+    - Metadata
+  
+  field_constraints:
+    Confidence:
+      type: number
+      min: 0
+      max: 100
+    
+    Tree of Thought:
+      type: string
+      min_length: 50
+    
+    Chain of Thought Reasoning:
+      type: string
+      min_length: 50
+
 # Fields to be extracted as part of the structured metadata response
 metadata_fields:
   - name: user_query
     type: string
     description: "The original user query."
+    validation: "non_empty, min_length: 3"
 
   - name: intent 
     type: enum
     description: "Identified intent of the user query."
-    options: [Certification, Explanation, Summarization, General Inquiry, Troubleshooting, Out of Scope]
+    options: [Certification, Explanation, Summarization, Code Generation, Data Analysis, 
+              Planning, General Inquiry, Troubleshooting, Out of Scope]
+
+  - name: confidence_score
+    type: number
+    description: "Confidence level in the intent classification (0-100)."
+    validation: "min: 0, max: 100"
 
   - name: intent_keywords
     type: list
     description: "Keywords or phrases that signal the user's intent."
+    validation: "min_items: 1"
 
   - name: tone
     type: string
     description: "The user's tone (e.g., curious, confused, frustrated, demanding)."
+    options: [curious, confused, frustrated, demanding, neutral, technical, casual, urgent]
 
   - name: urgency_level
     type: enum
@@ -96,41 +249,123 @@ metadata_fields:
   - name: task_type
     type: enum
     description: "General task classification."
-    options: [information_retrieval, creative_generation, summarization, data_transformation, reasoning_analysis]
+    options: [information_retrieval, creative_generation, summarization, 
+              data_transformation, reasoning_analysis, code_generation, troubleshooting]
 
   - name: answer_format
     type: enum
     description: "Expected output format."
-    options: [short_answer, list, structured_yaml, paragraph_essay]
+    options: [short_answer, list, structured_yaml, paragraph_essay, code_block, diagram]
 
   - name: user_type
     type: enum
     description: "Inferred user type or profile."
-    options: [developer, researcher, student, business_user, unknown, network engineer]
+    options: [developer, researcher, student, business_user, technical_professional, 
+              network_engineer, data_scientist, beginner, expert, unknown]
+
+  - name: domain_specific
+    type: object
+    description: "Domain-specific metadata relevant to particular fields."
+    optional: true
+    fields:
+      - name: technical_domain
+        type: string
+        description: "Specific technical area (e.g., web development, networking)."
+        optional: true
+      
+      - name: industry
+        type: string
+        description: "Industry context for the query."
+        optional: true
+      
+      - name: skill_level_required
+        type: enum
+        description: "Skill level needed to understand the response."
+        options: [beginner, intermediate, advanced, expert]
+        optional: true
 
   - name: prompt_technique
     type: enum
     description: "Prompting strategy used."
-    options: [Zero-shot, Few-shot, Multi-shot, Step-back, Self-consistent, Chain-of-thought, Tree-of-thought]
+    options: [Zero-shot, Few-shot, Multi-shot, Step-back, Self-consistent, 
+              Chain-of-thought, Tree-of-thought, Chain-of-thought + Few-shot, 
+              Tree-of-thought + Self-consistent]
 
   - name: malicious_flags
     type: list
     optional: true
     condition: "Only present if final_route is 'malicious_prompt'"
     description: "Indicators of harmful, manipulative, or unethical behavior."
+    options:
+      - prompt_injection
+      - jailbreak_attempt
+      - sensitive_content_request
+      - data_extraction_attempt
+      - policy_violation
+      - harmful_content_generation
+      - privacy_violation
 
   - name: timestamp
     type: string
-    optional: true
     description: "The timestamp when the query was received."
+    validation: "iso8601_format"
 
   - name: session_id
     type: string
     optional: true
     description: "Unique identifier for the user session."
+    validation: "uuid_format"
 
   - name: query_language
     type: string
     optional: true
     description: "The language in which the query is written."
-    
+    validation: "iso639_code"
+
+  - name: performance_metrics
+    type: object
+    description: "Metrics related to system performance."
+    fields:
+      - name: processing_time_ms
+        type: number
+        description: "Time taken to process the query in milliseconds."
+      
+      - name: model_version
+        type: string
+        description: "Version of the model used for processing."
+
+  - name: privacy_handling
+    type: object
+    optional: true
+    description: "Information about privacy-sensitive content in the query."
+    fields:
+      - name: contains_pii
+        type: boolean
+        description: "Whether the query contains personally identifiable information."
+      
+      - name: pii_types
+        type: list
+        description: "Types of PII detected in the query."
+        optional: true
+        options: [name, email, phone, address, id_number, financial, health]
+
+# Test cases for different query types
+test_cases:
+  - query: "Explain how tree-of-thought prompting works"
+    expected_intent: "Explanation"
+    expected_technique: "Chain-of-thought"
+  
+  - query: "What AWS certifications should I get for DevOps?"
+    expected_intent: "Certification"
+    expected_technique: "Few-shot"
+  
+  - query: "My Docker container keeps crashing with error code 137"
+    expected_intent: "Troubleshooting"
+    expected_technique: "Step-back"
+
+# Monitoring configuration
+monitoring:
+  log_level: "info"
+  performance_tracking: true
+  error_sampling_rate: 0.1
+  feedback_collection: true

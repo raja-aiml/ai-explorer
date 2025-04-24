@@ -1,0 +1,51 @@
+query,expected_intent,expected_technique,query_complexity,task_type,tone,urgency_level,user_type
+"Explain how tree-of-thought prompting works",Explanation,Chain-of-thought,intermediate,information_retrieval,neutral,low,developer
+"What AWS certifications should I get for DevOps?",Certification,Few-shot,intermediate,information_retrieval,curious,medium,developer
+"My Docker container keeps crashing with error code 137",Troubleshooting,Step-back,advanced,reasoning_analysis,frustrated,high,developer
+"Write a Python function to parse JSON data",Code Generation,Multi-shot,intermediate,creative_generation,direct,medium,developer
+"Can you summarize this research paper on quantum computing?",Summarization,Few-shot,advanced,summarization,neutral,medium,researcher
+"What's the capital of France?",General Inquiry,Zero-shot,basic,information_retrieval,curious,low,student
+"How do I create a CI/CD pipeline for my application?",Planning,Tree-of-thought,advanced,reasoning_analysis,neutral,medium,developer
+"Analyze this sales data to find trends over the last quarter",Data Analysis,Self-consistent,advanced,data_transformation,direct,medium,business_user
+"Book me a flight to London next week",Out of Scope,Zero-shot,basic,information_retrieval,demanding,high,business_user
+"How do I fix the 'undefined reference' error in my C++ code?",Troubleshooting,Chain-of-thought,intermediate,reasoning_analysis,frustrated,high,developer
+"What's the difference between REST and GraphQL?",Explanation,Few-shot,intermediate,information_retrieval,curious,low,developer
+"I need a study plan for the CISSP certification",Certification,Chain-of-thought + Few-shot,advanced,planning,neutral,medium,network_engineer
+"Can you create a React component for a login form?",Code Generation,Multi-shot,intermediate,creative_generation,direct,medium,developer
+"Summarize the key points of DevOps methodology",Summarization,Few-shot,intermediate,summarization,neutral,low,student
+"How many planets are in our solar system?",General Inquiry,Zero-shot,basic,information_retrieval,curious,low,student
+"I need a project plan for migrating from on-prem to cloud",Planning,Tree-of-thought,advanced,reasoning_analysis,direct,high,business_user
+"What does CORS stand for and why is it important?",Explanation,Chain-of-thought,intermediate,information_retrieval,curious,medium,developer
+"My website is showing a 500 error after deployment",Troubleshooting,Step-back,advanced,reasoning_analysis,frustrated,high,developer
+"Can AI be conscious?",General Inquiry,Tree-of-thought,advanced,reasoning_analysis,curious,low,researcher
+"Write an SQL query to find the top 10 customers by revenue",Code Generation,Few-shot,intermediate,creative_generation,direct,medium,data_scientist
+"I'm getting a NullPointerException in my Java application",Troubleshooting,Chain-of-thought,intermediate,reasoning_analysis,frustrated,high,developer
+"What's the best approach to implement authentication in a web app?",Planning,Chain-of-thought,advanced,reasoning_analysis,neutral,medium,developer
+"Give me a summary of the latest research on natural language processing",Summarization,Few-shot,advanced,summarization,neutral,medium,researcher
+"Which machine learning certification should I pursue?",Certification,Few-shot,intermediate,information_retrieval,curious,medium,data_scientist
+"My neural network model is overfitting, how do I fix it?",Troubleshooting,Chain-of-thought,advanced,reasoning_analysis,frustrated,medium,data_scientist
+"What are the top cloud security certifications?",Certification,Few-shot,intermediate,information_retrieval,curious,medium,network_engineer
+"Explain the concept of blockchain in simple terms",Explanation,Step-back,intermediate,information_retrieval,neutral,low,beginner
+"I need a recursive function to traverse a binary tree",Code Generation,Multi-shot,advanced,creative_generation,direct,medium,developer
+"What's the difference between supervised and unsupervised learning?",Explanation,Few-shot,intermediate,information_retrieval,curious,low,student
+"Help me debug this Python error: ImportError: No module named 'tensorflow'",Troubleshooting,Step-back,intermediate,reasoning_analysis,frustrated,high,developer
+"Analyze this CSV data and create a visualization",Data Analysis,Self-consistent,advanced,data_transformation,direct,medium,data_scientist
+"Can you explain what Docker containers are?",Explanation,Few-shot,intermediate,information_retrieval,curious,low,beginner
+"Write a function to calculate Fibonacci numbers",Code Generation,Multi-shot,intermediate,creative_generation,direct,low,student
+"My application is slow after the latest update",Troubleshooting,Tree-of-thought,advanced,reasoning_analysis,frustrated,high,developer
+"Summarize the key points of agile methodology",Summarization,Few-shot,intermediate,summarization,neutral,low,business_user
+"I'm studying for the AWS Solution Architect exam, any tips?",Certification,Few-shot,intermediate,information_retrieval,curious,medium,developer
+"Write a shell script to backup my database daily",Code Generation,Multi-shot,intermediate,creative_generation,direct,medium,developer
+"My Redis cluster is experiencing high memory usage",Troubleshooting,Chain-of-thought,advanced,reasoning_analysis,frustrated,high,developer
+"Create a roadmap for implementing microservices",Planning,Tree-of-thought,advanced,reasoning_analysis,neutral,medium,developer
+"What's the difference between HTTP and HTTPS?",Explanation,Zero-shot,basic,information_retrieval,curious,low,beginner
+"Can you analyze this server log to find the error?",Data Analysis,Self-consistent,advanced,data_transformation,direct,high,network_engineer
+"I need help with the Network+ certification exam",Certification,Few-shot,intermediate,information_retrieval,curious,medium,network_engineer
+"Can you explain quantum computing to a 5-year-old?",Explanation,Step-back,intermediate,information_retrieval,neutral,low,beginner
+"Write a function to sort an array in JavaScript",Code Generation,Few-shot,basic,creative_generation,direct,low,beginner
+"My website is not mobile-responsive, how do I fix it?",Troubleshooting,Chain-of-thought,intermediate,reasoning_analysis,frustrated,medium,developer
+"Create a study plan for the CompTIA Security+ exam",Certification,Chain-of-thought + Few-shot,advanced,planning,neutral,medium,student
+"What's the best way to secure an API?",Planning,Chain-of-thought,advanced,reasoning_analysis,neutral,medium,developer
+"Explain the CAP theorem in distributed systems",Explanation,Chain-of-thought,advanced,information_retrieval,neutral,low,developer
+"How do I set up SSL certificates for my website?",Troubleshooting,Few-shot,intermediate,reasoning_analysis,curious,medium,developer
+"Write a program to find prime numbers",Code Generation,Multi-shot,intermediate,creative_generation,direct,low,student
