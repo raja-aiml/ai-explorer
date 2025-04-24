@@ -1,47 +1,90 @@
-# Reference to the available routing logic definitions
-# This variable should point to a file or object containing predefined routes
-# Each route maps an intent category to a handling strategy (e.g., explanation, summarization)
+# =====================================================================
+# QUERY ROUTER CONFIGURATION FILE
+# =====================================================================
+# This configuration defines the tasks, techniques, and metadata fields
+# used by the query router template.
+# =====================================================================
+
+# Reference to available routing logic definitions
+# Points to a file containing predefined routes and handling strategies
 route_definitions_reference: routes_definitions
 
-# Tasks the system must perform in sequence to classify and respond to the query
+# =====================================================================
+# ANALYSIS TASKS
+# =====================================================================
+# The sequential analytical tasks the system performs to process queries
 tasks:
   - title: Tree of Thought
     description: >
-      Explore multiple plausible interpretations of the user’s query.
-      * Provide a comprehensive overview of the topic.
-      * Conduct an expert-level inquiry into both theoretical and practical aspects.
-      * Deliver a detailed, structured explanation covering foundational definitions, implementation strategies, and advanced use cases.
-      * The goal is to have the system analyze the query content and automatically determine the most appropriate classification.
+      Explore multiple plausible interpretations of the user's query.
+      * Generate 3-5 different possible interpretations
+      * Consider both explicit and implicit intentions
+      * Evaluate technical and non-technical perspectives
+      * Identify potential ambiguities or unclear aspects
+      * Example: For "How do I fix memory leaks?", consider interpretations
+        for different programming languages, different levels of expertise,
+        and different contexts (development vs. production)
 
   - title: Chain of Thought Reasoning
     description: >
-      Engage in a sequential reasoning process that evaluates the multiple interpretations produced in the Tree of Thought step.
-      * Analyze contextual clues and keywords from the query.
-      * Consider the depth, clarity, and nuance of each interpretation.
-      * Evaluate logical connections and dependencies among various aspects of the query.
-      * Prioritize interpretations based on completeness, relevance, and alignment with inferred user intentions.
+      Evaluate each interpretation through logical reasoning.
+      * Analyze contextual clues and specific terminology
+      * Identify the most likely intended meaning
+      * Consider complexity level and implied expertise
+      * Evaluate which interpretation addresses the core problem
+      * Example: For multiple interpretations of "How do I fix memory leaks?",
+        reason through which language context is most likely based on any
+        technical terms used and the complexity of the question
 
   - title: Final Classification
     description: >
-      Synthesize insights from previous steps to determine the most appropriate processing route.
-      * Select the final route that best aligns with overall context, user intent, and identified priorities.
+      Select the optimal prompting technique based on analysis.
+      * Match query characteristics to the most appropriate technique
+      * Consider query complexity, specificity, and required detail
+      * Balance between efficiency and comprehensiveness
+      * Example: For troubleshooting queries like "My app crashes with error X",
+        Step-back technique might be best to first understand the context before
+        jumping to solutions
 
   - title: Metadata Extraction
     description: >
-      Systematically extract and compile relevant metadata from both the user's query and the reasoning process.
-      * Identify keywords, tone, urgency, and user profile indicators.
+      Extract relevant attributes and characteristics from the query.
+      * Identify key terms that signal intent and domain
+      * Assess tone, urgency, and complexity
+      * Determine user expertise level and query context
+      * Example: For "URGENT: Need help fixing production database crash!",
+        extract high urgency, frustrated tone, and database domain
 
-# List of supported prompting strategies the model can choose from
+# =====================================================================
+# PROMPTING TECHNIQUES
+# =====================================================================
+# Available strategies for structuring responses to queries
 prompt_techniques:
-  - Zero-shot          # No examples provided; relies solely on query and instructions
-  - Few-shot           # One or a few examples included for contextual guidance
-  - Multi-shot         # Multiple examples included to cover variations and edge cases
-  - Step-back          # Reframe or simplify the problem before solving
-  - Self-consistent    # Generate multiple outputs and choose the most consistent one
-  - Chain-of-thought   # Encourage step-by-step reasoning before final answer
-  - Tree-of-thought    # Explore and evaluate multiple possible lines of reasoning
+  - Zero-shot          # Direct response without examples (simple queries)
+                       # Example: "What's the capital of France?"
+                       
+  - Few-shot           # Using 1-3 examples to guide response (comparative queries)
+                       # Example: "Compare REST vs GraphQL APIs"
+                       
+  - Multi-shot         # Using many examples covering variations (pattern learning)
+                       # Example: "Write a function to parse different JSON formats"
+                       
+  - Step-back          # Reframe complex problems into simpler components
+                       # Example: "My Docker container has error code 137"
+                       
+  - Self-consistent    # Generate multiple answers and find consensus
+                       # Example: "Analyze this data and identify key trends"
+                       
+  - Chain-of-thought   # Show logical reasoning steps before final answer
+                       # Example: "Why does my code produce this unexpected output?"
+                       
+  - Tree-of-thought    # Explore multiple reasoning paths to find best solution
+                       # Example: "Design a CI/CD pipeline for my microservices"
 
-# Specifies the order in which sections should appear in the structured YAML response
+# =====================================================================
+# RESPONSE FORMATTING
+# =====================================================================
+# Specifies the order of sections in the structured response
 response_order:
   - Tree of Thought
   - Chain of Thought Reasoning
@@ -49,64 +92,83 @@ response_order:
   - Explanation
   - Metadata
 
-# Fields to be extracted as part of the structured metadata response
+# =====================================================================
+# METADATA SCHEMA
+# =====================================================================
+# Fields to extract during query analysis
+
+# 1. Intent and Content Metadata
 metadata_fields:
   - name: intent_keywords
     type: list
     description: "Keywords or phrases that signal the user's intent."
-
-  - name: tone
-    type: string
-    description: "The user's tone (e.g., curious, confused, frustrated, demanding)."
-
-  - name: urgency_level
-    type: enum
-    description: "Estimated urgency of the query."
-    options: [low, medium, high]
+    example: "['error', 'fix', 'not working']"
 
   - name: query_complexity
     type: enum
-    description: "Assessed complexity of the user query."
+    description: "Assessed complexity level of the query."
     options: [basic, intermediate, advanced]
+    example: "advanced"
 
   - name: task_type
     type: enum
     description: "General task classification."
     options: [information_retrieval, creative_generation, summarization, data_transformation, reasoning_analysis]
+    example: "reasoning_analysis"
 
   - name: answer_format
     type: enum
     description: "Expected output format."
     options: [short_answer, list, structured_yaml, paragraph_essay]
+    example: "structured_yaml"
+
+  - name: prompt_technique
+    type: enum
+    description: "Selected prompting strategy."
+    options: [Zero-shot, Few-shot, Multi-shot, Step-back, Self-consistent, Chain-of-thought, Tree-of-thought]
+    example: "Chain-of-thought"
+
+# 2. User Context Metadata
+  - name: tone
+    type: string
+    description: "The user's tone (e.g., curious, confused, frustrated, demanding)."
+    example: "frustrated"
+
+  - name: urgency_level
+    type: enum
+    description: "Estimated urgency of the query."
+    options: [low, medium, high]
+    example: "high"
 
   - name: user_type
     type: enum
     description: "Inferred user type or profile."
-    options: [developer, researcher, student, business_user, unknown, network engineer]
+    options: [developer, researcher, student, business_user, unknown, network_engineer]
+    example: "developer"
 
-  - name: prompt_technique
-    type: enum
-    description: "Prompting strategy used."
-    options: [Zero-shot, Few-shot, Multi-shot, Step-back, Self-consistent, Chain-of-thought, Tree-of-thought]
-
+# 3. Security and Session Metadata
   - name: malicious_flags
     type: list
     optional: true
     condition: "Only present if final_route is 'malicious_prompt'"
     description: "Indicators of harmful, manipulative, or unethical behavior."
+    example: "['prompt_injection', 'jailbreak_attempt']"
 
   - name: timestamp
     type: string
     optional: true
     description: "The timestamp when the query was received."
+    example: "2023-11-15T14:22:31Z"
 
   - name: session_id
     type: string
     optional: true
     description: "Unique identifier for the user session."
+    example: "sess_12345abcde"
 
   - name: query_language
     type: string
     optional: true
     description: "The language in which the query is written."
+    example: "en-US"
     
