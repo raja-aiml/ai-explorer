@@ -13,8 +13,9 @@ import (
 )
 
 const (
-	binaryName = "ai-explorer"
-	rootDir    = ".."
+   binaryName = "ai-explorer"
+   // rootDir is the relative path from the e2e test directory to the project root
+   rootDir    = "../.."
 )
 
 type TestPaths struct {
