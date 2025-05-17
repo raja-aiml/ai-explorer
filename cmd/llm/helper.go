@@ -3,6 +3,8 @@ package llm
 import (
 	"fmt"
 	"os"
+
+	"raja.aiml/ai.explorer/paths"
 )
 
 // getPrompt reads the prompt from a file and returns its content as a string.
@@ -16,5 +18,6 @@ func getPrompt(path string) (string, error) {
 
 // saveResponse writes the LLM response to the specified file.
 func saveResponse(response, path string) error {
+	paths.EnsureDirectoryExists(path)
 	return os.WriteFile(path, []byte(response), 0644)
 }

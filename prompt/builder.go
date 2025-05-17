@@ -7,6 +7,7 @@ import (
 	"github.com/flosch/pongo2/v6"
 	"gopkg.in/yaml.v3"
 	"raja.aiml/ai.explorer/logger"
+	"raja.aiml/ai.explorer/paths"
 )
 
 // Builder implements the Renderer interface using pongo2 and YAML config.
@@ -76,6 +77,7 @@ func (b *Builder) renderAndWrite(tpl *pongo2.Template, ctx pongo2.Context, outPa
 	if err != nil {
 		b.Logger.Fatalf("template rendering failed: %v", err)
 	}
+	paths.EnsureDirectoryExists(outPath)
 	if err := b.WriteFile(outPath, []byte(out), 0644); err != nil {
 		b.Logger.Fatalf("failed to write output file: %v", err)
 	}
