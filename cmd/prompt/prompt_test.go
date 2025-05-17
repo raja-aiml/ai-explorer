@@ -3,6 +3,7 @@ package cmd
 import (
 	"testing"
 
+	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,4 +25,12 @@ func TestPromptCommand_FlagsRegistered(t *testing.T) {
 	assert.NotNil(t, flags.Lookup("config"))
 	assert.NotNil(t, flags.Lookup("output"))
 	assert.NotNil(t, flags.Lookup("preview"))
+}
+
+func TestPromptAutoComplete_ReturnsCategories(t *testing.T) {
+	completions, directive := promptAutoComplete(&cobra.Command{}, nil, "")
+
+	expected := []string{"topics", "demo", "classification"}
+	assert.Equal(t, expected, completions)
+	assert.Equal(t, cobra.ShellCompDirectiveNoFileComp, directive)
 }
