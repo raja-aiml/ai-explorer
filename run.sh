@@ -2,6 +2,11 @@
 
 set -e
 
+export OLLAMA_HOST="localhost"
+# OLLAMA_PORT="11434"
+# OLLAMA_API="http://$OLLAMA_HOST:$OLLAMA_PORT/v1/models"
+# OLLAMA_MODEL="phi4"
+
 # Step 1: Generate prompts for all categories and topics
 echo "🔧 Generating prompts for all combinations..."
 categories=("classification" "demo" "topics")
