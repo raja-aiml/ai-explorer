@@ -19,6 +19,7 @@ type LLMRunner struct {
 // Run executes the LLM flow.
 // Run executes the LLM flow.
 func (r *LLMRunner) Run() {
+	var err error
 	fmt.Fprintln(r.Out, "[llm] Reading prompt...")
 	prompt, err := r.GetPrompt(r.PromptPath)
 	if err != nil {
@@ -26,7 +27,17 @@ func (r *LLMRunner) Run() {
 	}
 
 	fmt.Fprintln(r.Out, "[llm] Running LLM...")
-	resp, err := r.RunLLM(prompt)
+	// Run LLM call and recover from any unexpected panic
+	var resp string
+
+	func() {
+		defer func() {
+			if rec := recover(); rec != nil {
+				err = fmt.Errorf("internal LLM panic: %v", rec)
+			}
+		}()
+		resp, err = r.RunLLM(prompt)
+	}()
 	if err != nil {
 		log.Fatalf("[llm] LLM error: %v", err)
 	}

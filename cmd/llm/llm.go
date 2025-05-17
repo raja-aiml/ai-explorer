@@ -40,6 +40,8 @@ func init() {
 	llmCmd.Flags().StringVarP(&promptPath, "prompt", "p", DefaultPromptPath, "Prompt file")
 	llmCmd.Flags().DurationVarP(&timeout, "timeout", "d", DefaultTimeout, "Timeout duration")
 	llmCmd.Flags().StringVarP(&outputPath, "output", "o", "", "Output file path to save LLM response")
+	// Optional: override Ollama server URL if not using OLLAMA_HOST env var
+	llmCmd.Flags().StringVar(&serverURL, "server-url", "", "Ollama server URL (e.g. http://localhost:11434)")
 }
 
 // runLLMInteraction initializes the LLM client and returns the response for the given prompt.
@@ -56,6 +58,14 @@ func runLLMInteraction(prompt string) (string, error) {
 		},
 	}
 
+	// If using Ollama, ensure a host is configured via env or flag
+	if providerName == "ollama" && os.Getenv("OLLAMA_HOST") == "" && serverURL == "" {
+		return "", fmt.Errorf("ollama selected but neither OLLAMA_HOST nor --server-url provided")
+	}
+	// Override OLLAMA_HOST env var if server-url flag is set
+	if serverURL != "" {
+		os.Setenv("OLLAMA_HOST", serverURL)
+	}
 	client, err := llm.NewDefaultClient(cfg)
 	if err != nil {
 		return "", fmt.Errorf("failed to create LLM client: %w", err)

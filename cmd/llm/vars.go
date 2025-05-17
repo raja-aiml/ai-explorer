@@ -1,6 +1,8 @@
 package llm
 
-import "time"
+import (
+	"time"
+)
 
 // Default file paths
 const (
@@ -13,6 +15,7 @@ const (
 )
 
 // CLI flags
+// CLI flags
 var (
 	providerName string
 	modelName    string
@@ -20,4 +23,6 @@ var (
 	promptPath   string
 	timeout      time.Duration
 	outputPath   string
+	// serverURL allows overriding the Ollama server endpoint
+	serverURL string
 )
