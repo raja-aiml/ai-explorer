@@ -8,7 +8,7 @@
 
 - 🧠 **Prompt Generator**: Generate prompts using YAML config + template.
 - 🤖 **LLM CLI**: Send raw prompts to LLMs (e.g., OpenAI, Ollama).
-- 🛠️ **Template System**: Uses `pongo2` (Jinja-like) templating.
+- 🛠 **Taskfile automation**: handy build & test tasks
 - 📁 **Category-based routing**: Organize prompts under `resources/<category>/<topic>`.
 - ✅ **100% Unit + E2E Tests**: Ginkgo-powered full coverage.
 - 📜 **Shell Completion**: Autogenerate completions for bash, zsh, fish, PowerShell.

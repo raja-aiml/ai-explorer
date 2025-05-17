@@ -17,7 +17,6 @@ type LLMRunner struct {
 }
 
 // Run executes the LLM flow.
-// Run executes the LLM flow.
 func (r *LLMRunner) Run() {
 	fmt.Fprintln(r.Out, "[llm] Reading prompt...")
 	prompt, err := r.GetPrompt(r.PromptPath)
